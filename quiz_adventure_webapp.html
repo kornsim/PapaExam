@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6d5dfc">
+<title>Quiz Adventure ป.1–ป.6</title>
+<style>
+:root{--accent:#6d5dfc;--bg:#f6f7fb;--card:#fff;--text:#1d2330;--muted:#6d7482;--border:#e4e7ef;--good:#178a55;--bad:#c93c4f}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#f7f8ff,#eef7ff);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+main{max-width:760px;margin:auto;padding:18px} .screen{display:none} .screen.active{display:block}
+.hero,.card{background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:0 8px 30px rgba(30,35,60,.06)}
+.hero{padding:24px} .center{text-align:center} .logo{font-size:56px} h1{font-size:clamp(30px,8vw,46px);margin:4px 0;font-weight:900} h2{margin:0 0 8px} .muted{color:var(--muted)}
+.btn{min-height:48px;border-radius:14px;border:1px solid var(--border);background:#fff;color:var(--text);font-size:16px;font-weight:800;padding:10px 16px;cursor:pointer} .primary{background:var(--accent);color:#fff;border-color:var(--accent)} .wide{width:100%;margin-top:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px} .grid.two{grid-template-columns:repeat(2,1fr)}
+.tile{padding:17px 10px;text-align:center;min-height:105px} .tile .emoji{display:block;font-size:30px;margin-bottom:7px}
+.field{margin:12px 0} label{display:block;font-weight:800;margin-bottom:6px} input,select{width:100%;min-height:48px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:16px;background:#fff}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:14px} .pill{border:1px solid var(--border);padding:7px 10px;border-radius:99px;font-size:13px;font-weight:800;background:#fff}
+.progress{height:9px;background:#edf0f6;border-radius:99px;overflow:hidden;margin:12px 0 20px} .bar{height:100%;background:var(--accent);width:0;transition:.2s}
+.question{font-size:22px;font-weight:850;line-height:1.45;margin:10px 0 16px} .option{width:100%;text-align:left;margin:6px 0;min-height:56px} .option.selected{outline:3px solid #d7d2ff;background:#f6f4ff}
+.option.correct{border-color:var(--good);background:#effaf4} .option.wrong{border-color:var(--bad);background:#fff1f3}
+.feedback{padding:12px;border-radius:12px;background:#f7f8fb;margin-top:12px;display:none} .feedback.show{display:block}
+.score{font-size:52px;font-weight:950;text-align:center} .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0} .stat{padding:14px;border:1px solid var(--border);border-radius:15px;text-align:center;background:#f9fafc} .stat strong{display:block;font-size:25px}
+.small{font-size:13px;color:var(--muted)} .hidden{display:none!important}
+@media(max-width:520px){main{padding:12px}.hero{padding:18px;border-radius:20px}.grid{grid-template-columns:1fr 1fr}.grid .full-mobile{grid-column:1/-1}.question{font-size:20px}}
+</style>
+
+<style id="source-library-style">
+/* SOURCE_LIBRARY_CSS */
+.upload-box{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.upload-box input[type=file]{max-width:100%;padding:10px;border:1px dashed #bbb;border-radius:12px;background:#fafafa}
+.hint,.muted{font-size:13px;line-height:1.55;color:#666}
+.source-list{margin-top:14px;display:grid;gap:10px}
+.source-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;border:1px solid #eee;border-radius:14px;background:#fff}
+.source-name{font-weight:700;word-break:break-word}
+.source-meta{font-size:12px;color:#777;margin-top:3px}
+.source-actions{display:flex;gap:6px;flex-shrink:0}
+.source-actions button{padding:7px 10px;border:0;border-radius:9px;cursor:pointer}
+.source-empty{padding:14px;border-radius:12px;background:#f7f7f7;color:#777;text-align:center}
+</style>
+</head>
+<body>
+<main>
+<section id="home" class="screen active">
+<div class="hero center">
+<div class="logo">🎓✨</div><h1>Quiz Adventure</h1>
+<p class="muted">เกมฝึกทำข้อสอบสำหรับเด็ก อ.1 – ป.6</p>
+<button class="btn primary wide" onclick="go('register')">📝 ลงทะเบียน / เริ่มใช้งาน</button>
+<button class="btn wide" onclick="go('login')">🔐 เข้าสู่ระบบ</button>
+<div class="grid">
+<div class="card tile"><span class="emoji">📚</span><b>3 วิชา</b><div class="small">ไทย · คณิต · อังกฤษ</div></div>
+<div class="card tile"><span class="emoji">🏆</span><b>9 ระดับ</b><div class="small">อ.1 – ป.6</div></div>
+<div class="card tile full-mobile"><span class="emoji">📈</span><b>เก็บสถิติ</b><div class="small">ติดตามพัฒนาการ</div></div>
+</div>
+</div></section>
+
+<section id="register" class="screen"><div class="hero">
+<h2>📝 ลงทะเบียน</h2><p class="muted">ข้อมูลตัวอย่างจะถูกเก็บไว้ในเครื่องนี้เท่านั้น</p>
+<div class="field"><label>ชื่อผู้เล่น</label><input id="name" placeholder="เช่น น้องต้นกล้า" maxlength="40"></div>
+<div class="field"><label>ประเภท</label><select id="role"><option value="child">🧒 นักเรียน</option><option value="parent">👨‍👩‍👧 ผู้ปกครอง</option></select></div>
+<div id="gradeWrap" class="field"><label>ระดับชั้น</label><select id="grade"><option>อ.1</option><option>อ.2</option><option>อ.3</option><option>ป.1</option><option>ป.2</option><option selected>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option></select></div>
+<div class="field"><label>PIN 4 หลัก</label><input id="pin" inputmode="numeric" maxlength="4" placeholder="••••"></div>
+<button class="btn primary wide" onclick="register()">สร้างบัญชี</button><button class="btn wide" onclick="go('home')">← กลับ</button>
+<p id="regMsg" class="small"></p>
+</div></section>
+
+<section id="login" class="screen"><div class="hero">
+<h2>🔐 เข้าสู่ระบบ</h2>
+<div class="field"><label>PIN 4 หลัก</label><input id="loginPin" inputmode="numeric" maxlength="4" placeholder="••••"></div>
+<button class="btn primary wide" onclick="login()">เข้าเกม</button><button class="btn wide" onclick="go('home')">← กลับ</button>
+<p id="loginMsg" class="small"></p>
+</div></section>
+
+<section id="choose" class="screen"><div class="hero">
+<div class="top"><div><h2>เลือกวิชา</h2><div id="welcome" class="muted"></div></div><span class="pill" id="gradePill"></span></div>
+<div class="grid">
+<button class="card tile btn" onclick="chooseSubject('ภาษาไทย')"><span class="emoji">📖</span>ภาษาไทย</button>
+<button class="card tile btn" onclick="chooseSubject('คณิตศาสตร์')"><span class="emoji">➗</span>คณิตศาสตร์</button>
+<button class="card tile btn full-mobile" onclick="chooseSubject('ภาษาอังกฤษ')"><span class="emoji">🇬🇧</span>ภาษาอังกฤษ</button><button class="card tile btn full-mobile" onclick="chooseSubject('วิทยาศาสตร์')"><span class="emoji">🔬</span>วิทยาศาสตร์</button>
+</div>
+<div class="small" style="margin-top:15px">Prototype: ตอนนี้มีชุดทดลองคณิตศาสตร์ ป.3 ด่าน 1 จำนวน 20 ข้อ</div>
+</div></section>
+
+<section id="stage" class="screen"><div class="hero center">
+<div class="logo">🏆</div><h2>เลือกด่าน</h2><p id="stageInfo" class="muted"></p>
+<button class="btn primary wide" onclick="startQuiz()">ด่าน 1 · 20 ข้อ</button>
+<button class="btn wide" disabled>🔒 ด่าน 2 · ต้องผ่านด่าน 1</button>
+<button class="btn wide" onclick="go('choose')">← กลับ</button>
+</div></section>
+
+<section id="quiz" class="screen"><div class="hero">
+<div class="top"><b id="quizTitle"></b><span class="pill" id="counter"></span></div>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<div id="question" class="question"></div>
+<div id="options"></div>
+<div id="feedback" class="feedback"></div>
+<button id="next" class="btn primary wide" onclick="nextQuestion()">เลือกคำตอบก่อน</button>
+</div></section>
+
+<section id="result" class="screen"><div class="hero center">
+<div class="logo">🎉</div><h2>จบด่านแล้ว!</h2><div id="score" class="score"></div>
+<p id="resultText" class="muted"></p>
+<div class="statgrid"><div class="stat"><strong id="correct"></strong>ตอบถูก</div><div class="stat"><strong id="wrong"></strong>ตอบผิด</div></div>
+<button class="btn primary wide" onclick="startQuiz()">🔄 เล่นอีกครั้ง</button>
+<button class="btn wide" onclick="go('choose')">📚 เลือกวิชา</button>
+</div></section>
+
+<!-- SOURCE_LIBRARY_START -->
+<section class="card" id="sourceLibraryCard">
+  <div class="section-title">📚 ฐานเอกสารตัวอย่างข้อสอบ</div>
+  <p class="muted">อัปโหลดเอกสารตัวอย่างข้อสอบ/บทเรียน เพื่อเก็บเป็นแหล่งข้อมูลสำหรับสร้างแบบฝึกหัดในขั้นต่อไป</p>
+  <div class="upload-box">
+    <input id="sourceFileInput" type="file"
+      accept=".pdf,.doc,.docx,.txt,.csv,.json,.xlsx,.xls"
+      multiple />
+    <button class="primary" type="button" onclick="uploadSourceFiles()">⬆️ Upload เอกสาร</button>
+  </div>
+  <div class="hint">
+    รองรับการเก็บไฟล์ PDF, Word, Excel, CSV, TXT และ JSON ในเครื่องนี้
+    <br>ไฟล์ PDF/Word/Excel จะถูกเก็บไว้เป็น “ต้นฉบับ” ก่อน และสามารถต่อยอดระบบอ่านเนื้อหาอัตโนมัติได้
+  </div>
+  <div id="sourceLibraryList" class="source-list"></div>
+</section>
+<!-- SOURCE_LIBRARY_END -->
+</main>
+<script>
+const mathQuestions=[{"q": "47 + 28 = เท่าไร?", "o": ["65", "75", "85", "95"], "a": 1, "e": "47 + 28 = 75"}, {"q": "63 − 27 = เท่าไร?", "o": ["26", "36", "46", "56"], "a": 1, "e": "63 − 27 = 36"}, {"q": "6 × 7 = เท่าไร?", "o": ["36", "42", "48", "54"], "a": 1, "e": "6 × 7 = 42"}, {"q": "45 ÷ 5 = เท่าไร?", "o": ["7", "8", "9", "10"], "a": 2, "e": "45 ÷ 5 = 9"}, {"q": "125 + 236 = เท่าไร?", "o": ["351", "361", "371", "381"], "a": 1, "e": "125 + 236 = 361"}, {"q": "500 − 175 = เท่าไร?", "o": ["315", "325", "335", "345"], "a": 1, "e": "500 − 175 = 325"}, {"q": "8 × 9 = เท่าไร?", "o": ["64", "72", "81", "90"], "a": 1, "e": "8 × 9 = 72"}, {"q": "72 ÷ 8 = เท่าไร?", "o": ["7", "8", "9", "10"], "a": 2, "e": "72 ÷ 8 = 9"}, {"q": "1 เมตร เท่ากับกี่เซนติเมตร?", "o": ["10", "50", "100", "1,000"], "a": 2, "e": "1 เมตร = 100 เซนติเมตร"}, {"q": "เวลา 08.30 น. อีก 1 ชั่วโมง จะเป็นเวลาใด?", "o": ["09.00 น.", "09.30 น.", "10.00 น.", "10.30 น."], "a": 1, "e": "08.30 น. + 1 ชั่วโมง = 09.30 น."}, {"q": "รูปสามเหลี่ยมมีด้านกี่ด้าน?", "o": ["2", "3", "4", "5"], "a": 1, "e": "รูปสามเหลี่ยมมี 3 ด้าน"}, {"q": "20 + 35 − 10 = เท่าไร?", "o": ["35", "40", "45", "55"], "a": 2, "e": "20 + 35 − 10 = 45"}, {"q": "มีส้ม 24 ผล แบ่งให้ 6 คนเท่า ๆ กัน คนละกี่ผล?", "o": ["3", "4", "5", "6"], "a": 1, "e": "24 ÷ 6 = 4"}, {"q": "จำนวนใดมากที่สุด?", "o": ["3,205", "3,250", "3,502", "3,052"], "a": 2, "e": "3,502 มีค่ามากที่สุด"}, {"q": "ครึ่งหนึ่งของ 18 คือเท่าไร?", "o": ["6", "8", "9", "12"], "a": 2, "e": "18 ÷ 2 = 9"}, {"q": "4 สัปดาห์มีกี่วัน?", "o": ["21", "24", "28", "32"], "a": 2, "e": "4 × 7 = 28 วัน"}, {"q": "แม่มีเงิน 100 บาท ซื้อของ 65 บาท เหลือเท่าไร?", "o": ["25", "30", "35", "45"], "a": 2, "e": "100 − 65 = 35 บาท"}, {"q": "แบบรูป 2, 4, 6, 8, □ จำนวนถัดไปคือ?", "o": ["9", "10", "11", "12"], "a": 1, "e": "เพิ่มครั้งละ 2 จึงได้ 10"}, {"q": "7 × 5 = เท่าไร?", "o": ["30", "35", "40", "45"], "a": 1, "e": "7 × 5 = 35"}, {"q": "32 ÷ 4 = เท่าไร?", "o": ["6", "7", "8", "9"], "a": 2, "e": "32 ÷ 4 = 8"}];
+const scienceQuestions=[{"q": "สิ่งใดเป็นสิ่งมีชีวิต", "o": ["ก้อนหิน", "ต้นไม้", "โต๊ะ", "ดินสอ"], "a": 1, "e": "ต้นไม้เป็นสิ่งมีชีวิต เพราะสามารถเจริญเติบโตและดำรงชีวิตได้"}, {"q": "ส่วนใดของพืชทำหน้าที่ดูดน้ำและแร่ธาตุจากดิน", "o": ["ราก", "ลำต้น", "ใบ", "ดอก"], "a": 0, "e": "รากทำหน้าที่ดูดน้ำและแร่ธาตุจากดินเข้าสู่พืช"}, {"q": "สิ่งใดพืชต้องการเพื่อช่วยในการเจริญเติบโต", "o": ["แสงแดด", "ก้อนหิน", "พลาสติก", "แก้ว"], "a": 0, "e": "พืชต้องการแสงแดดร่วมกับน้ำ อากาศ และสารอาหารเพื่อการดำรงชีวิต"}, {"q": "ข้อใดเป็นสัตว์ที่ออกลูกเป็นไข่", "o": ["สุนัข", "แมว", "ไก่", "วัว"], "a": 2, "e": "ไก่เป็นสัตว์ที่ออกลูกเป็นไข่"}, {"q": "มนุษย์ใช้อวัยวะใดในการมองเห็น", "o": ["หู", "ตา", "จมูก", "ลิ้น"], "a": 1, "e": "ตาเป็นอวัยวะที่ทำหน้าที่รับแสงและช่วยให้เรามองเห็น"}, {"q": "อวัยวะใดช่วยให้เราได้ยินเสียง", "o": ["หู", "ตา", "ผิวหนัง", "จมูก"], "a": 0, "e": "หูทำหน้าที่รับและช่วยให้เราได้ยินเสียง"}, {"q": "น้ำแข็งเมื่อได้รับความร้อนจะเปลี่ยนเป็นอะไร", "o": ["น้ำ", "ไอน้ำทันที", "ดิน", "อากาศ"], "a": 0, "e": "น้ำแข็งได้รับความร้อนแล้วหลอมเหลวเป็นน้ำ"}, {"q": "น้ำเมื่อได้รับความร้อนมากจนเดือดจะเปลี่ยนเป็นอะไร", "o": ["น้ำแข็ง", "ไอน้ำ", "ดิน", "ทราย"], "a": 1, "e": "เมื่อน้ำเดือด น้ำจะเปลี่ยนสถานะเป็นไอน้ำ"}, {"q": "ข้อใดเป็นแหล่งกำเนิดแสงตามธรรมชาติ", "o": ["ดวงอาทิตย์", "หลอดไฟ", "ไฟฉาย", "เทียนไข"], "a": 0, "e": "ดวงอาทิตย์เป็นแหล่งกำเนิดแสงตามธรรมชาติ"}, {"q": "ข้อใดสามารถมองเห็นได้เพราะมีแสงสะท้อนเข้าสู่ตา", "o": ["ก้อนหินที่ไม่มีแสงส่องเลย", "หนังสือที่มีแสงส่อง", "ความมืดสนิท", "อากาศที่มองไม่เห็น"], "a": 1, "e": "เรามองเห็นหนังสือได้เมื่อมีแสงตกกระทบและสะท้อนเข้าสู่ตา"}, {"q": "ข้อใดเป็นวัสดุที่ดูดซับน้ำได้ดี", "o": ["ฟองน้ำ", "ถุงพลาสติก", "แก้ว", "โลหะ"], "a": 0, "e": "ฟองน้ำมีโครงสร้างที่สามารถดูดซับน้ำได้"}, {"q": "ข้อใดเป็นสมบัติของโลหะที่พบได้ทั่วไป", "o": ["นำไฟฟ้าได้", "ละลายน้ำง่ายทุกชนิด", "โปร่งใสทุกชนิด", "ไม่มีน้ำหนัก"], "a": 0, "e": "โลหะหลายชนิดสามารถนำไฟฟ้าได้"}, {"q": "แรงผลักหรือแรงดึงสามารถทำให้วัตถุเกิดการเปลี่ยนแปลงใดได้", "o": ["การเคลื่อนที่", "การหายไปจากโลก", "การกลายเป็นสิ่งมีชีวิต", "การเพิ่มจำนวนเอง"], "a": 0, "e": "แรงสามารถทำให้วัตถุเริ่มเคลื่อนที่ หยุด หรือเปลี่ยนทิศทางได้"}, {"q": "ถ้าออกแรงผลักรถของเล่น รถของเล่นจะเกิดอะไรขึ้น", "o": ["เคลื่อนที่", "กลายเป็นของเหลว", "มีขนาดใหญ่ขึ้น", "เปลี่ยนเป็นพืช"], "a": 0, "e": "แรงผลักสามารถทำให้รถของเล่นเคลื่อนที่ได้"}, {"q": "ดวงอาทิตย์ให้พลังงานใดแก่โลก", "o": ["แสงและความร้อน", "เสียงเท่านั้น", "น้ำเท่านั้น", "ลมเท่านั้น"], "a": 0, "e": "ดวงอาทิตย์เป็นแหล่งพลังงานสำคัญที่ให้ทั้งแสงและความร้อนแก่โลก"}, {"q": "ข้อใดช่วยลดการใช้พลังงานไฟฟ้าได้", "o": ["เปิดไฟทุกห้องไว้", "ปิดไฟเมื่อไม่ใช้งาน", "เปิดโทรทัศน์ทิ้งไว้", "เปิดเครื่องปรับอากาศพร้อมเปิดหน้าต่าง"], "a": 1, "e": "การปิดไฟเมื่อไม่ใช้งานช่วยลดการใช้พลังงานไฟฟ้า"}, {"q": "กลางวันและกลางคืนเกิดขึ้นเพราะเหตุใด", "o": ["โลกหมุนรอบตัวเอง", "ดวงจันทร์หมุนรอบโลกเท่านั้น", "ดวงอาทิตย์ดับทุกคืน", "เมฆบังโลกทั้งหมด"], "a": 0, "e": "โลกหมุนรอบตัวเอง ทำให้บริเวณต่าง ๆ หันเข้าหาหรือหันออกจากดวงอาทิตย์"}, {"q": "สิ่งใดเป็นดาวบริวารของโลก", "o": ["ดวงอาทิตย์", "ดวงจันทร์", "ดาวอังคาร", "ดาวพฤหัสบดี"], "a": 1, "e": "ดวงจันทร์เป็นดาวบริวารตามธรรมชาติของโลก"}, {"q": "เมฆฝนมีความเกี่ยวข้องกับสิ่งใดมากที่สุด", "o": ["การเกิดฝน", "การเกิดแผ่นดินไหว", "การเกิดภูเขาไฟ", "การเกิดกลางคืน"], "a": 0, "e": "เมฆฝนเกี่ยวข้องกับการตกของน้ำจากบรรยากาศลงสู่พื้นโลก"}, {"q": "ข้อใดเป็นการดูแลสิ่งแวดล้อมที่เหมาะสม", "o": ["ทิ้งขยะลงแม่น้ำ", "เผาขยะทุกชนิด", "คัดแยกขยะก่อนทิ้ง", "ใช้ถุงพลาสติกครั้งเดียวจำนวนมาก"], "a": 2, "e": "การคัดแยกขยะช่วยให้ขยะบางประเภทนำกลับมาใช้หรือรีไซเคิลได้"}];
+let currentUser=null, subject="", grade="", qi=0, score=0, selected=-1, answered=false;
+const $=id=>document.getElementById(id);
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0)}
+$('role').addEventListener('change',e=>$('gradeWrap').classList.toggle('hidden',e.target.value==='parent'));
+$('pin').addEventListener('input',e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,4));
+$('loginPin').addEventListener('input',e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,4));
+function register(){
+ const name=$('name').value.trim(), pin=$('pin').value, role=$('role').value, g=$('grade').value;
+ if(!name||pin.length!==4){$('regMsg').textContent='กรุณากรอกชื่อและ PIN ให้ครบ 4 หลัก';return}
+ const u={name,pin,role,grade:role==='parent'?'':g};
+ localStorage.setItem('quizUser',JSON.stringify(u)); currentUser=u;
+ $('regMsg').textContent='สร้างบัญชีเรียบร้อย กำลังเข้าสู่เกม...'; setTimeout(()=>setupChoose(),300);
+}
+function login(){
+ const pin=$('loginPin').value, raw=localStorage.getItem('quizUser');
+ if(!raw){$('loginMsg').textContent='ยังไม่มีบัญชีในเครื่องนี้ กรุณาลงทะเบียนก่อน';return}
+ const u=JSON.parse(raw); if(pin!==u.pin){$('loginMsg').textContent='PIN ไม่ถูกต้อง';return}
+ currentUser=u; setupChoose();
+}
+function setupChoose(){$('welcome').textContent='สวัสดี '+currentUser.name+' 👋';$('gradePill').textContent=currentUser.grade||'ผู้ปกครอง';go('choose')}
+function chooseSubject(s){subject=s;$('stageInfo').textContent=(currentUser.grade||'')+' · '+s;go('stage')}
+function startQuiz(){
+ if((subject!=='คณิตศาสตร์'&&subject!=='วิทยาศาสตร์')||currentUser.grade!=='ป.3'){
+   alert('Prototype ตอนนี้เปิดชุดทดลอง คณิตศาสตร์ ป.3 และวิทยาศาสตร์ ป.3\nวิชาและระดับอื่นสามารถเติมคลังข้อสอบต่อได้');
+   return;
+ }
+ qi=0;score=0;renderQuestion();go('quiz');
+}
+function renderQuestion(){
+ selected=-1;answered=false; const questions=(subject==='วิทยาศาสตร์'?scienceQuestions:mathQuestions); const q=questions[qi];
+ $('quizTitle').textContent=subject+' · '+currentUser.grade;
+ $('counter').textContent='ข้อ '+(qi+1)+'/20'; $('bar').style.width=((qi+1)/20*100)+'%';
+ $('question').textContent=q.q; $('feedback').className='feedback'; $('feedback').textContent='';
+ $('next').textContent='เลือกคำตอบก่อน'; $('options').innerHTML='';
+ q.o.forEach((opt,i)=>{
+   const b=document.createElement('button'); b.className='btn option'; b.textContent=String.fromCharCode(65+i)+'. '+opt;
+   b.onclick=()=>selectAnswer(i,b); $('options').appendChild(b);
+ });
+}
+function selectAnswer(i,b){
+ if(answered)return; selected=i;
+ document.querySelectorAll('#options .option').forEach(x=>x.classList.remove('selected')); b.classList.add('selected');
+ $('next').textContent=qi===19?'ดูผลคะแนน':'ตรวจคำตอบ';
+}
+function nextQuestion(){
+ if(selected<0)return;
+ if(!answered){
+   answered=true; const questions=(subject==='วิทยาศาสตร์'?scienceQuestions:mathQuestions); const q=questions[qi], ok=selected===q.a;
+   if(ok)score++;
+   document.querySelectorAll('#options .option').forEach((b,i)=>{if(i===q.a)b.classList.add('correct'); if(i===selected&&i!==q.a)b.classList.add('wrong')});
+   $('feedback').textContent=(ok?'✅ ถูกต้อง! ':'❌ ยังไม่ถูกต้อง: ')+q.e; $('feedback').classList.add('show');
+   $('next').textContent=qi===19?'ดูผลคะแนน':'ข้อต่อไป →'; return;
+ }
+ if(qi<19){qi++;renderQuestion()}else finish();
+}
+function finish(){
+ const pct=score*5; $('score').textContent=score+'/20 · '+pct+'%'; $('correct').textContent=score; $('wrong').textContent=20-score;
+ $('resultText').textContent=pct>=80?'ยอดเยี่ยม! พร้อมไปด่านต่อไป 🚀':pct>=60?'เก่งมาก! ฝึกอีกนิดแล้วจะดีขึ้นอีก 💪':'ลองอีกครั้งได้เลย ทุกข้อที่ทำคือการฝึก 🌟';
+ const key='quizStats'; const stats=JSON.parse(localStorage.getItem(key)||'{}');
+ stats[subject+'_'+currentUser.grade]={lastScore:score,lastPercent:pct,lastAttempt:new Date().toISOString()}; localStorage.setItem(key,JSON.stringify(stats)); go('result');
+}
+</script>
+
+<script id="source-library-js">
+/* SOURCE_LIBRARY_JS */
+const SOURCE_DB_NAME = 'GameForAngpaoSourceDB';
+const SOURCE_STORE = 'documents';
+
+function sourceDbOpen(){
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open(SOURCE_DB_NAME,1);
+    req.onupgradeneeded = () => {
+      const db=req.result;
+      if(!db.objectStoreNames.contains(SOURCE_STORE)){
+        db.createObjectStore(SOURCE_STORE,{keyPath:'id',autoIncrement:true});
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+async function saveSourceDocument(file){
+  const db=await sourceDbOpen();
+  const record={
+    name:file.name,
+    type:file.type || 'application/octet-stream',
+    size:file.size,
+    uploadedAt:new Date().toISOString(),
+    file:file
+  };
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(SOURCE_STORE,'readwrite');
+    const req=tx.objectStore(SOURCE_STORE).add(record);
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+async function getSourceDocuments(){
+  const db=await sourceDbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(SOURCE_STORE,'readonly');
+    const req=tx.objectStore(SOURCE_STORE).getAll();
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+async function deleteSourceDocument(id){
+  const db=await sourceDbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(SOURCE_STORE,'readwrite');
+    const req=tx.objectStore(SOURCE_STORE).delete(id);
+    req.onsuccess=()=>resolve();
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+function formatBytes(n){
+  if(!n) return '0 B';
+  const units=['B','KB','MB','GB'];
+  let i=0, x=n;
+  while(x>=1024 && i<units.length-1){x/=1024;i++;}
+  return `${x.toFixed(i?1:0)} ${units[i]}`;
+}
+
+async function uploadSourceFiles(){
+  const input=document.getElementById('sourceFileInput');
+  if(!input || !input.files.length){
+    alert('กรุณาเลือกเอกสารก่อน');
+    return;
+  }
+  try{
+    for(const file of input.files) await saveSourceDocument(file);
+    input.value='';
+    await renderSourceLibrary();
+    alert('บันทึกเอกสารลงฐานเอกสารในเครื่องนี้แล้ว');
+  }catch(e){
+    console.error(e);
+    alert('ไม่สามารถบันทึกเอกสารได้: '+e.message);
+  }
+}
+
+async function renderSourceLibrary(){
+  const box=document.getElementById('sourceLibraryList');
+  if(!box) return;
+  try{
+    const docs=await getSourceDocuments();
+    if(!docs.length){
+      box.innerHTML='<div class="source-empty">ยังไม่มีเอกสารตัวอย่างข้อสอบ</div>';
+      return;
+    }
+    box.innerHTML=docs.map(d=>`
+      <div class="source-item">
+        <div>
+          <div class="source-name">📄 ${escapeHtml(d.name)}</div>
+          <div class="source-meta">${formatBytes(d.size)} · ${new Date(d.uploadedAt).toLocaleString('th-TH')}</div>
+        </div>
+        <div class="source-actions">
+          <button onclick="downloadSourceDocument(${d.id})">ดู/ดาวน์โหลด</button>
+          <button onclick="removeSourceDocument(${d.id})">ลบ</button>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    box.innerHTML='<div class="source-empty">เบราว์เซอร์นี้ไม่รองรับฐานเอกสารแบบออฟไลน์</div>';
+  }
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+async function downloadSourceDocument(id){
+  const docs=await getSourceDocuments();
+  const d=docs.find(x=>x.id===id);
+  if(!d) return;
+  const url=URL.createObjectURL(d.file);
+  const a=document.createElement('a');
+  a.href=url; a.download=d.name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+async function removeSourceDocument(id){
+  if(!confirm('ลบเอกสารนี้ออกจากฐานเอกสารในเครื่องหรือไม่?')) return;
+  await deleteSourceDocument(id);
+  await renderSourceLibrary();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderSourceLibrary();
+});
+</script>
+</body></html>
